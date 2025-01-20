@@ -1,0 +1,3 @@
+synchrnoization-algorithms/.venv
+communication-protocols/.venv
+mutex-algorithms/.venvgit reset --soft HEAD~
