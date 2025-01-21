@@ -1,3 +1,2 @@
-synchrnoization-algorithms/.venv
-communication-protocols/.venv
-mutex-algorithms/.venv
+.idea/
+.venv/
