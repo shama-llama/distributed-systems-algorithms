@@ -1,8 +1,7 @@
-# Ricart-Agrawala Algorithm
-
 import time
 from collections import deque
 
+# Ricart-Agrawala Algorithm
 
 class LamportClock:
     def __init__(self):
@@ -70,12 +69,10 @@ class Process:
 
 
 if __name__ == "__main__":
-    # Initialize processes
     total_processes = 3
     processes = [Process(i, total_processes)
                  for i in range(1, total_processes + 1)]
 
-    # Simulate resource requests
     print("--- Simulation Start ---\n")
     processes[0].send_request(processes)
     time.sleep(1)
@@ -83,6 +80,5 @@ if __name__ == "__main__":
     time.sleep(1)
     processes[2].send_request(processes)
 
-    # Allow time for the processes to use and release the resource
     time.sleep(5)
     print("--- Simulation End ---")

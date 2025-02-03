@@ -1,8 +1,7 @@
-# Centralized Mutual Exclusion Algorithm
-
 import time
 from collections import deque
 
+# Centralized Mutual Exclusion Algorithm
 
 class Coordinator:
     def __init__(self):
@@ -47,7 +46,7 @@ class Process:
 
     def use_resource(self):
         print(f"[Process {self.process_id}]: Using the resource...\n")
-        time.sleep(2)  # Simulate resource usage
+        time.sleep(2)
         self.release_resource()
 
     def release_resource(self):
@@ -56,22 +55,18 @@ class Process:
 
 
 if __name__ == "__main__":
-    # Instantiate the coordinator
     coordinator = Coordinator()
 
-    # Create processes
     process1 = Process(1, coordinator)
     process2 = Process(2, coordinator)
     process3 = Process(3, coordinator)
 
-    # Simulate resource requests
     print("--- Simulation Start ---\n")
     process1.request_resource()
-    time.sleep(1)  # Simulate a slight delay before the next request
+    time.sleep(1) 
     process2.request_resource()
-    time.sleep(1)  # Simulate a slight delay before the next request
+    time.sleep(1)
     process3.request_resource()
 
-    # Allow time for the processes to use and release the resource
     time.sleep(5)
     print("--- Simulation End ---")
