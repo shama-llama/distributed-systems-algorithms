@@ -28,8 +28,7 @@ class Process:
         self.clock.increment()
         self.waiting_for_resource = True
         message = (self.clock.timestamp, self.process_id)
-        print(f"[Process {self.process_id}]: Sending resource request with timestamp {
-              self.clock.timestamp} to quorum {self.quorum}.")
+        print(f"[Process {self.process_id}]: Sending resource request with timestamp {self.clock.timestamp} to quorum {self.quorum}.")
         for process in self.quorum:
             if process.process_id != self.process_id:
                 process.receive_request(message)
@@ -37,30 +36,24 @@ class Process:
     def receive_request(self, message):
         incoming_timestamp, sender_id = message
         self.clock.update(incoming_timestamp)
-        print(f"[Process {self.process_id}]: Received request from Process {
-              sender_id} with timestamp {incoming_timestamp}.")
+        print(f"[Process {self.process_id}]: Received request from Process {sender_id} with timestamp {incoming_timestamp}.")
 
         if not self.resource_in_use and not self.waiting_for_resource:
-            print(f"[Process {self.process_id}]: Sending OK to Process {
-                  sender_id}.")
+            print(f"[Process {self.process_id}]: Sending OK to Process {sender_id}.")
             self.send_ok(sender_id)
         elif self.resource_in_use:
-            print(f"[Process {self.process_id}]: Resource in use. Queuing request from Process {
-                  sender_id}.")
+            print(f"[Process {self.process_id}]: Resource in use. Queuing request from Process {sender_id}.")
             self.queue.append(message)
         elif self.waiting_for_resource:
             if (incoming_timestamp, sender_id) < (self.clock.timestamp, self.process_id):
-                print(f"[Process {self.process_id}]: Sending OK to Process {
-                      sender_id} (lower timestamp).")
+                print(f"[Process {self.process_id}]: Sending OK to Process {sender_id} (lower timestamp).")
                 self.send_ok(sender_id)
             else:
-                print(f"[Process {self.process_id}]: Queuing request from Process {
-                      sender_id} (higher timestamp).")
+                print(f"[Process {self.process_id}]: Queuing request from Process {sender_id} (higher timestamp).")
                 self.queue.append(message)
 
     def send_ok(self, receiver_id):
-        print(f"[Process {self.process_id}]: OK sent to Process {
-              receiver_id}.")
+        print(f"[Process {self.process_id}]: OK sent to Process {receiver_id}.")
 
     def release_resource(self):
         self.resource_in_use = False
@@ -69,8 +62,7 @@ class Process:
         while self.queue:
             queued_message = self.queue.popleft()
             _, sender_id = queued_message
-            print(f"[Process {self.process_id}]: Sending OK to queued Process {
-                  sender_id}.")
+            print(f"[Process {self.process_id}]: Sending OK to queued Process {sender_id}.")
             self.send_ok(sender_id)
 
     def access_resource(self):
