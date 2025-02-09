@@ -2,16 +2,17 @@ import threading
 import time
 import random
 
+
 class Process:
     def __init__(self, process_id, processes):
         self.id = process_id
-        self.processes = processes  
-        self.state = "RELEASED"     
-        self.timestamp = None       
-        self.clock = 0              
-        self.reply_count = 0        
+        self.processes = processes
+        self.state = "RELEASED"
+        self.timestamp = None
+        self.clock = 0
+        self.reply_count = 0
         self.deferred_requests = []
-        self.lock = threading.Lock() 
+        self.lock = threading.Lock()
         self.condition = threading.Condition(self.lock)
 
     def request_cs(self):
@@ -21,19 +22,23 @@ class Process:
             self.clock += 1
             self.timestamp = self.clock
             self.reply_count = 0
-            print(f"[Process {self.id}] Requesting critical section with timestamp {self.timestamp}")
+            print(
+                f"[Process {self.id}] Requesting critical section with timestamp {self.timestamp}"
+            )
 
         for proc in self.processes:
             if proc.id == self.id:
                 with self.lock:
                     self.reply_count += 1
             else:
-                threading.Thread(target=proc.receive_request, args=(self.id, self.timestamp)).start()
+                threading.Thread(
+                    target=proc.receive_request, args=(self.id, self.timestamp)
+                ).start()
 
         with self.condition:
             while self.reply_count < len(self.processes):
                 self.condition.wait()
-        
+
         with self.lock:
             self.state = "HELD"
             print(f"[Process {self.id}] Entering critical section")
@@ -56,17 +61,31 @@ class Process:
         with self.lock:
             self.clock = max(self.clock, sender_timestamp) + 1
             if self.state == "RELEASED":
-                print(f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). Not interested: sending reply.")
-                threading.Thread(target=self.processes[sender_id].receive_reply, args=(self.id,)).start()
+                print(
+                    f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). Not interested: sending reply."
+                )
+                threading.Thread(
+                    target=self.processes[sender_id].receive_reply, args=(self.id,)
+                ).start()
             elif self.state == "HELD":
-                print(f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). In CS: deferring reply.")
+                print(
+                    f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). In CS: deferring reply."
+                )
                 self.deferred_requests.append(sender_id)
             elif self.state == "WANTED":
-                if (sender_timestamp < self.timestamp) or (sender_timestamp == self.timestamp and sender_id < self.id):
-                    print(f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). Sender wins: sending reply.")
-                    threading.Thread(target=self.processes[sender_id].receive_reply, args=(self.id,)).start()
+                if (sender_timestamp < self.timestamp) or (
+                    sender_timestamp == self.timestamp and sender_id < self.id
+                ):
+                    print(
+                        f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). Sender wins: sending reply."
+                    )
+                    threading.Thread(
+                        target=self.processes[sender_id].receive_reply, args=(self.id,)
+                    ).start()
                 else:
-                    print(f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). Deferring reply.")
+                    print(
+                        f"[Process {self.id}] Received request from {sender_id} (timestamp {sender_timestamp}). Deferring reply."
+                    )
                     self.deferred_requests.append(sender_id)
 
     def receive_reply(self, sender_id):
@@ -76,7 +95,9 @@ class Process:
         """
         with self.condition:
             self.reply_count += 1
-            print(f"[Process {self.id}] Received reply from {sender_id} (Total replies: {self.reply_count}).")
+            print(
+                f"[Process {self.id}] Received reply from {sender_id} (Total replies: {self.reply_count})."
+            )
             if self.reply_count >= len(self.processes):
                 self.condition.notify_all()
 
@@ -92,12 +113,13 @@ class Process:
         self.do_critical_section()
         self.release_cs()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     num_processes = 3
     processes = [None] * num_processes
     for i in range(num_processes):
         processes[i] = Process(i, processes)
-    
+
     threads = []
     for proc in processes:
         t = threading.Thread(target=proc.run)

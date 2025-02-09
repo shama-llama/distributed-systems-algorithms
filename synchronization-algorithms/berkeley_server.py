@@ -1,13 +1,15 @@
-from dateutil import parser
 import threading
 import datetime
 import socket
 import time
 
-HOST = '127.0.0.1'
+from dateutil import parser
+
+HOST = "127.0.0.1"
 PORT = 65423
 
 client_data = {}
+
 
 def receive_clock(connector, address):
     while True:
@@ -18,11 +20,12 @@ def receive_clock(connector, address):
         client_data[address] = {
             "clock_time": clock_time,
             "time_difference": clock_time_diff,
-            "connector": connector
+            "connector": connector,
         }
 
         print("Client Data updated with: " + str(address), end="\n\n")
         time.sleep(5)
+
 
 def start_connection(master_server):
     while True:
@@ -33,19 +36,23 @@ def start_connection(master_server):
 
         current_thread = threading.Thread(
             target=receive_clock,
-            args=(master_slave_connector,
-                  slave_address, ))
+            args=(
+                master_slave_connector,
+                slave_address,
+            ),
+        )
         current_thread.start()
 
+
 def get_average_diff():
-    current_client_data = client_data.copy()
-    time_difference_list = list(client['time_difference']
-                                for client_addr, client
-                                in client_data.items())
+    time_difference_list = list(
+        client["time_difference"] for client_addr, client in client_data.items()
+    )
     sum_of_clock_difference = sum(time_difference_list, datetime.timedelta(0, 0))
     average_clock_difference = sum_of_clock_difference / len(client_data)
 
     return average_clock_difference
+
 
 def sync_clocks():
     while True:
@@ -60,16 +67,22 @@ def sync_clocks():
 
             for client_addr, client in client_data.items():
                 try:
-                    synchronized_time = datetime.datetime.now() + average_clock_difference
-                    client['connector'].send(str(synchronized_time).encode())
-                except Exception as e:
-                    print("Something went wrong while sending synchronized time through " + str(client_addr))
+                    synchronized_time = (
+                        datetime.datetime.now() + average_clock_difference
+                    )
+                    client["connector"].send(str(synchronized_time).encode())
+                except Exception:
+                    print(
+                        "Something went wrong while sending synchronized time through "
+                        + str(client_addr)
+                    )
         else:
             print("No client data." + " Synchronization not applicable.")
 
         print("\n\n")
 
         time.sleep(5)
+
 
 def initiate_server():
     master_server = socket.socket()
@@ -83,16 +96,13 @@ def initiate_server():
     print("Clock server started...\n")
 
     print("Starting to make connections...\n")
-    master_thread = threading.Thread(
-        target=start_connection,
-        args=(master_server, ))
+    master_thread = threading.Thread(target=start_connection, args=(master_server,))
     master_thread.start()
 
     print("Starting synchronization parallelly...\n")
-    sync_thread = threading.Thread(
-        target=sync_clocks,
-        args=())
+    sync_thread = threading.Thread(target=sync_clocks, args=())
     sync_thread.start()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     initiate_server()

@@ -1,8 +1,9 @@
 import socket
 import datetime
 
-HOST = '127.0.0.1'
+HOST = "127.0.0.1"
 PORT = 8080
+
 
 def initiateClockServer():
     server_socket = socket.socket()
@@ -13,10 +14,11 @@ def initiateClockServer():
 
     while True:
         connection, address = server_socket.accept()
-        print('Server connected to', address)
+        print("Server connected to", address)
         connection.send(str(datetime.datetime.now()).encode())
 
         connection.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     initiateClockServer()

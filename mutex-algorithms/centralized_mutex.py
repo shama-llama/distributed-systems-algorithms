@@ -2,6 +2,7 @@ import threading
 import time
 import random
 
+
 class Coordinator:
     def __init__(self):
         self.lock = threading.Lock()
@@ -23,10 +24,13 @@ class Coordinator:
             print(f"Coordinator: Process {process_id} released the resource.")
             if self.waiting_queue:
                 next_process_id, next_event = self.waiting_queue.pop(0)
-                print(f"Coordinator: Granting access to waiting Process {next_process_id}.")
+                print(
+                    f"Coordinator: Granting access to waiting Process {next_process_id}."
+                )
                 next_event.set()
             else:
                 self.resource_busy = False
+
 
 def process_task(process_id, coordinator):
     print(f"Process {process_id}: Requesting access.")
@@ -34,14 +38,15 @@ def process_task(process_id, coordinator):
     event = threading.Event()
     coordinator.request_access(process_id, event)
     event.wait()
-    
+
     print(f"Process {process_id}: Access granted. Using resource...")
     time.sleep(random.uniform(1, 3))
-    
+
     print(f"Process {process_id}: Finished using resource. Releasing it.")
     coordinator.release_access(process_id)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     coordinator = Coordinator()
     threads = []
 

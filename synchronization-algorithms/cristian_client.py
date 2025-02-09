@@ -1,10 +1,12 @@
 import socket
 import datetime
+
 from dateutil import parser
 from timeit import default_timer as timer
 
-HOST = '127.0.0.1'
+HOST = "127.0.0.1"
 PORT = 8080
+
 
 def synchronizeTime():
     client_socket = socket.socket()
@@ -20,9 +22,7 @@ def synchronizeTime():
 
     process_delay_latency = response_time - request_time
 
-    print("Process Delay latency: "
-          + str(process_delay_latency)
-          + " seconds")
+    print("Process Delay latency: " + str(process_delay_latency) + " seconds")
 
     print("Actual clock time at client side: " + str(actual_time))
 
@@ -35,5 +35,6 @@ def synchronizeTime():
 
     client_socket.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     synchronizeTime()
