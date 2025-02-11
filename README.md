@@ -1,5 +1,8 @@
 # Distributed Systems Algorithms
 
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://docs.python.org/3.12/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 This repo contains projects for the Distributed Systems (CoSc 6003) course. It has Python code for some of the fundamental ideas in distributed systems: inter-process communication, mutual exclusion, and clock synchrnoization.
 
 ## Algorithms
