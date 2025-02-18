@@ -10,27 +10,22 @@ class Coordinator:
         self.queue = deque()
 
     def request_access(self, process_id):
-        print(f"[Coordinator]: Received access request from Process {
-              process_id}.")
+        print(f"[Coordinator]: Received access request from Process {process_id}.")
         if self.currently_accessing is None:
             self.currently_accessing = process_id
-            print(f"[Coordinator]: Resource granted to Process {
-                  process_id}.\n")
+            print(f"[Coordinator]: Resource granted to Process {process_id}.\n")
             return True
         else:
-            print(f"[Coordinator]: Resource busy. Process {
-                  process_id} added to the queue.\n")
+            print(f"[Coordinator]: Resource busy. Process {process_id} added to the queue.\n")
             self.queue.append(process_id)
             return False
 
     def release_resource(self, process_id):
-        print(f"[Coordinator]: Process {
-              process_id} has released the resource.")
+        print(f"[Coordinator]: Process {process_id} has released the resource.")
         if self.queue:
             next_process = self.queue.popleft()
             self.currently_accessing = next_process
-            print(f"[Coordinator]: Resource granted to Process {
-                  next_process}.\n")
+            print(f"[Coordinator]: Resource granted to Process {next_process}.\n")
         else:
             self.currently_accessing = None
             print(f"[Coordinator]: Resource is now free.\n")
