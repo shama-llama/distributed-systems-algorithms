@@ -1,25 +1,23 @@
 from mpi4py import MPI
 
 def mpi_program():
-    comm = MPI.COMM_WORLD  # Create a communicator
-    rank = comm.Get_rank()  # Get the rank of the process
-    size = comm.Get_size()  # Get the total number of processes
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
 
     if rank == 0:
-        # Server logic (rank 0)
         print(f"Server (rank {rank}) waiting for messages from clients...")
         for i in range(1, size):
-            data = comm.recv(source=i, tag=100)  # Receive data from clients
+            data = comm.recv(source=i, tag=100)
             print(f"Server received from client {i}: {data}")
             response = f"Hello, Client {i}. Server acknowledges your message."
-            comm.send(response, dest=i, tag=200)  # Send response back to client
+            comm.send(response, dest=i, tag=200)
     else:
-        # Client logic (rank > 0)
         message = f"Hello from Client {rank}"
-        comm.send(message, dest=0, tag=100)  # Send message to server
+        comm.send(message, dest=0, tag=100)
         print(f"Client {rank} sent message: {message}")
         
-        response = comm.recv(source=0, tag=200)  # Receive response from server
+        response = comm.recv(source=0, tag=200)
         print(f"Client {rank} received response: {response}")
 
 if __name__ == "__main__":

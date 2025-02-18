@@ -1,8 +1,7 @@
-# Quorum-Based Mutual Exclusion Algorithm
-
 import time
 from collections import deque
 
+# Quorum-Based Mutual Exclusion Algorithm
 
 class LamportClock:
     def __init__(self):
@@ -22,7 +21,7 @@ class Process:
         self.queue = deque()
         self.resource_in_use = False
         self.waiting_for_resource = False
-        self.quorum = quorum  # Define quorum for this process
+        self.quorum = quorum
 
     def send_request(self):
         self.clock.increment()
@@ -73,23 +72,20 @@ class Process:
 
 
 if __name__ == "__main__":
-    # Define quorums
     total_processes = 4
     processes = [Process(i, []) for i in range(1, total_processes + 1)]
 
-    # Assign quorums (example with overlapping quorums)
     processes[0].quorum = [processes[0], processes[1], processes[2]]
     processes[1].quorum = [processes[1], processes[2], processes[3]]
     processes[2].quorum = [processes[2], processes[3], processes[0]]
     processes[3].quorum = [processes[3], processes[0], processes[1]]
 
-    # Simulate resource requests
     print("--- Simulation Start ---\n")
     processes[0].send_request()
     time.sleep(1)
     processes[1].send_request()
     time.sleep(1)
     processes[2].send_request()
-    # Allow time for the processes to use and release the resource
+
     time.sleep(5)
     print("--- Simulation End ---")
