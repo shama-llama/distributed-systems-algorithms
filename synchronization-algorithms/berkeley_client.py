@@ -5,7 +5,7 @@ import socket
 import time
 
 HOST = '127.0.0.1'
-PORT = 8080
+PORT = 65423
 
 def send_time(client_socket):
     while True:
