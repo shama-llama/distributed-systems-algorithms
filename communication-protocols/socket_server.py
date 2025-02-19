@@ -1,13 +1,13 @@
 import socket
 
-def server_program():
-    host = '127.0.0.1'
-    port = 65432
+HOST = '127.0.0.1'
+PORT = 65432
 
+def server_program():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((host, port))
+    server_socket.bind((HOST, PORT))
     server_socket.listen(5)
-    print(f"Server started at {host}:{port}")
+    print(f"Server started at {HOST}:{PORT}")
 
     while True:
         conn, address = server_socket.accept()

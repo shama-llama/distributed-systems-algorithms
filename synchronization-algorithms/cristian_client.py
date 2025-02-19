@@ -3,14 +3,16 @@ import datetime
 from dateutil import parser
 from timeit import default_timer as timer
 
+HOST = '127.0.0.1'
+PORT = 8080
+
 def synchronizeTime():
-    s = socket.socket()
-    port = 8000
-    s.connect(('127.0.0.1', port))
+    client_socket = socket.socket()
+    client_socket.connect((HOST, PORT))
 
     request_time = timer()
 
-    server_time = parser.parse(s.recv(1024).decode())
+    server_time = parser.parse(client_socket.recv(1024).decode())
     response_time = timer()
     actual_time = datetime.datetime.now()
 
@@ -31,7 +33,7 @@ def synchronizeTime():
     error = actual_time - client_time
     print("Synchronization error : " + str(error.total_seconds()) + " seconds")
 
-    s.close()
+    client_socket.close()
 
 if __name__ == '__main__':
     synchronizeTime()

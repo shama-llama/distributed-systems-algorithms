@@ -9,7 +9,7 @@ class Coordinator:
     """
     def __init__(self, id):
         self.id = id
-        self.granted_to = None  # Vote is available when None
+        self.granted_to = None
 
     def request_vote(self, process_id):
         if self.granted_to is None:
@@ -75,30 +75,23 @@ class Process:
             print(f"Process {self.process_id} received {votes} votes (needs at least {self.resource.m})")
             if self.resource.check_access_granted(votes):
                 print(f"Process {self.process_id} is granted access to resource '{self.resource.name}'!")
-                # Simulate resource usage for 1 second
                 time.sleep(1)
                 break
             else:
                 print(f"Process {self.process_id} not granted access; backing off.")
-                # Backoff for a random time between 0.5 and 2.0 seconds
                 backoff_time = random.uniform(0.5, 2.0)
                 time.sleep(backoff_time)
-                # Simulate potential resets during the backoff period
                 self.resource.reset_coordinators(self.reset_probability)
         print(f"Process {self.process_id} finished using resource '{self.resource.name}'.")
 
 if __name__ == "__main__":
     resource_name = "example_resource"
-    num_replicas = 32  # N = 32 replicas
+    num_replicas = 32
     resource = Resource(resource_name, num_replicas)
     
-    # Define simulation parameters:
-    # Assuming a process holds the resource for a short period (delta_t = 10 seconds) 
-    # over a 3-hour (10800 seconds) session, the probability of a coordinator resetting is:
     delta_t = 10
     reset_probability = delta_t / 10800.0
     
-    # Create 3 dummy processes that share the same resource.
     process1 = Process(1, resource, delta_t, reset_probability)
     process2 = Process(2, resource, delta_t, reset_probability)
     process3 = Process(3, resource, delta_t, reset_probability)

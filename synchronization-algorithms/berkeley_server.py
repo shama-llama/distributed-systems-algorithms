@@ -4,9 +4,12 @@ import datetime
 import socket
 import time
 
+HOST = '127.0.0.1'
+PORT = 8080
+
 client_data = {}
 
-def startReceivingClockTime(connector, address):
+def receive_clock(connector, address):
     while True:
         clock_time_string = connector.recv(1024).decode()
         clock_time = parser.parse(clock_time_string)
@@ -21,7 +24,7 @@ def startReceivingClockTime(connector, address):
         print("Client Data updated with: " + str(address), end="\n\n")
         time.sleep(5)
 
-def startConnecting(master_server):
+def start_connection(master_server):
     while True:
         master_slave_connector, addr = master_server.accept()
         slave_address = str(addr[0]) + ":" + str(addr[1])
@@ -29,12 +32,12 @@ def startConnecting(master_server):
         print(slave_address + " got connected successfully")
 
         current_thread = threading.Thread(
-            target=startReceivingClockTime,
+            target=receive_clock,
             args=(master_slave_connector,
                   slave_address, ))
         current_thread.start()
 
-def getAverageClockDiff():
+def get_average_diff():
     current_client_data = client_data.copy()
     time_difference_list = list(client['time_difference']
                                 for client_addr, client
@@ -44,22 +47,23 @@ def getAverageClockDiff():
 
     return average_clock_difference
 
-def synchronizeAllClocks():
+def sync_clocks():
     while True:
-
         print("New synchronization cycle started.")
         print("Number of clients to be synchronized: " + str(len(client_data)))
 
         if len(client_data) > 0:
-            average_clock_difference = getAverageClockDiff()
+            average_clock_difference = get_average_diff()
+            if average_clock_difference < datetime.timedelta(0):
+                print("Average clock difference is negative. Skipping synchronization.")
+                continue
+
             for client_addr, client in client_data.items():
                 try:
                     synchronized_time = datetime.datetime.now() + average_clock_difference
                     client['connector'].send(str(synchronized_time).encode())
                 except Exception as e:
-                    print("Something went wrong while " +
-                          "sending synchronized time " +
-                          "through " + str(client_addr))
+                    print("Something went wrong while sending synchronized time through " + str(client_addr))
         else:
             print("No client data." + " Synchronization not applicable.")
 
@@ -67,28 +71,28 @@ def synchronizeAllClocks():
 
         time.sleep(5)
 
-def initiateClockServer(port=8080):
+def initiate_server():
     master_server = socket.socket()
     master_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     print("Socket at master node created successfully\n")
 
-    master_server.bind(('', port))
+    master_server.bind((HOST, PORT))
 
     master_server.listen(10)
     print("Clock server started...\n")
 
     print("Starting to make connections...\n")
     master_thread = threading.Thread(
-        target=startConnecting,
+        target=start_connection,
         args=(master_server, ))
     master_thread.start()
 
     print("Starting synchronization parallelly...\n")
     sync_thread = threading.Thread(
-        target=synchronizeAllClocks,
+        target=sync_clocks,
         args=())
     sync_thread.start()
 
 if __name__ == '__main__':
-    initiateClockServer(port=8080)
+    initiate_server()

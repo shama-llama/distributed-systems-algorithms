@@ -1,11 +1,11 @@
 import socket
 
-def client_program():
-    host = '127.0.0.1'
-    port = 65432
+HOST = '127.0.0.1'
+PORT = 65432
 
+def client_program():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((host, port)) 
+    client_socket.connect((HOST, PORT)) 
 
     print("Connected to the server. Type 'exit' to disconnect.")
     while True:
