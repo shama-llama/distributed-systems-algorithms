@@ -4,21 +4,23 @@ def mpi_program():
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
+    
+    initial = 1
 
     if rank == 0:
-        print(f"Server (rank {rank}) waiting for messages from clients...")
-        for i in range(1, size):
-            data = comm.recv(source=i, tag=100)
-            print(f"Server received from client {i}: {data}")
-            response = f"Hello, Client {i}. Server acknowledges your message."
-            comm.send(response, dest=i, tag=200)
+        initial = initial * 2
+        print(f"Value at Worker {rank}: {initial}")
+        comm.send(initial, dest = rank + 1)
+    elif rank == size - 1:
+        recv = comm.recv(source = rank - 1)
+        initial = recv * 2
+        print(f"Value at Worker {rank}: {initial}")
     else:
-        message = f"Hello from Client {rank}"
-        comm.send(message, dest=0, tag=100)
-        print(f"Client {rank} sent message: {message}")
-        
-        response = comm.recv(source=0, tag=200)
-        print(f"Client {rank} received response: {response}")
+        recv = comm.recv(source = rank - 1)
+        initial = recv * 2
+        print(f"Value at Worker {rank}: {initial}")
+        comm.send(initial, dest = rank + 1)
+
 
 if __name__ == "__main__":
     mpi_program()
