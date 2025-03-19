@@ -76,8 +76,8 @@ This project uses `uv` for package management. `uv` is an extremely fast Python 
 - **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/shama-llama/noaa-dataset-project.git
-    cd noaa-dataset-project
+    git clone https://github.com/shama-llama/distributed-systems-algorithms.git
+    cd distributed-systems-algorithms
     ```
 
 - **Create a Virtual Environment and Install Dependencies with `uv`:**
